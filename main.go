@@ -14,15 +14,30 @@ import (
 var ctx = context.Background()
 
 func redisClient() {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
+	rdb := redis.NewClusterClient(&redis.ClusterOptions{
+		Addrs: []string{"192.168.8.117:7003"},
 	})
 
-	keys, _, _ := rdb.Scan(ctx, 0, "*", 10).Result()
+	var keys []string
+	var cursor uint64
+	var count int
 
-	fmt.Println(keys)
+	for {
+		keys, cursor, _ = rdb.Scan(ctx, cursor, "*2019*", 100).Result()
+
+		if len(keys) == 0 {
+			break
+		}
+
+		_, err := rdb.Del(ctx, keys...).Result()
+
+		fmt.Println(keys, err)
+
+		count += len(keys)
+		break
+	}
+
+	fmt.Println(count)
 }
 
 func main() {
