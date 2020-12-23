@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
-	"github.com/flc1125/redis-batch-delete/commands"
 	"github.com/go-redis/redis/v8"
 	"github.com/urfave/cli/v2"
 )
@@ -42,12 +42,43 @@ func redisClient() {
 
 func main() {
 
-	redisClient()
+	// redisClient()
 
 	app := &cli.App{
-		Name:   "boom",
-		Usage:  "make an explosive entrance",
-		Action: commands.Demo,
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:  "host",
+				Value: "localhost",
+				Usage: "HOST 信息",
+			},
+			&cli.IntFlag{
+				Name:    "port",
+				Value:   6379,
+				Aliases: []string{"p"},
+				Usage:   "PORT 信息",
+			},
+			&cli.BoolFlag{
+				Name:    "cluster",
+				Value:   false,
+				Aliases: []string{"c"},
+				Usage:   "Cluster 集群模式",
+			},
+			&cli.BoolFlag{
+				Name:    "show",
+				Value:   false,
+				Aliases: []string{"s"},
+				Usage:   "查看模式",
+			},
+		},
+		Name:  "redis-batch-delete",
+		Usage: "Redis 批量删除操作",
+		Action: func(c *cli.Context) error {
+			host, port, cluster := c.String("host"), c.Int("port"), c.Bool("cluster")
+
+			fmt.Println("afasdfasf---" + host + ":" + strconv.Itoa(port) + "-" + strconv.FormatBool(cluster))
+
+			return nil
+		},
 	}
 
 	err := app.Run(os.Args)
@@ -55,3 +86,5 @@ func main() {
 		log.Fatal(err)
 	}
 }
+
+// main -a -h 192.168.1.1 -p 12313 "*" --delete
