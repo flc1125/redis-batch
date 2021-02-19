@@ -4,11 +4,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/flc1125/redis-batch-delete/config"
+	"github.com/flc1125/redis-batch-delete/redis"
 	"github.com/urfave/cli/v2"
 )
 
-func Run(config *config.Config) {
+func Run() {
 	app := &cli.App{
 		Flags: []cli.Flag{
 			&cli.StringFlag{
@@ -35,9 +35,15 @@ func Run(config *config.Config) {
 				Usage:   "查看模式",
 			},
 		},
-		Name:   "redis-batch-delete",
-		Usage:  "Redis 批量删除操作",
-		Action: Default,
+		Name:  "redis-batch-delete",
+		Usage: "Redis 批量删除操作",
+		Action: func(c *cli.Context) error {
+			rdb := redis.New()
+
+			Handle(rdb)
+
+			return nil
+		},
 	}
 
 	err := app.Run(os.Args)
