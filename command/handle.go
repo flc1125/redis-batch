@@ -10,27 +10,27 @@ import (
 
 var ctx = context.Background()
 
-// 创建清理的协程
+// worker 任务处理
 func worker(rdb *redis.Client, queue chan string) {
 	for {
 		key := <-queue
 
-		fmt.Println(key, "Deleted")
 		_, err := rdb.Del(ctx, key).Result()
 
 		if err != nil {
-			fmt.Println(err.Error())
+			fmt.Println("failed to delete:", key)
+			continue
 		}
+
+		fmt.Println("Deleted：", key)
 	}
 }
 
-func Handle(rdb *redis.Client) {
-	var queue = make(chan string)
+// creater 创建任务者
+func creater(rdb *redis.Client, queue chan string) {
 	var keys []string
 	var cursor uint64 = 0
 	var err error
-
-	go worker(rdb, queue)
 
 	for {
 		keys, cursor, err = rdb.Scan(ctx, cursor, "*", 5).Result()
@@ -40,15 +40,23 @@ func Handle(rdb *redis.Client) {
 		}
 
 		for _, key := range keys {
-			// queue = append(queue, key)
 			queue <- key
+			fmt.Println("Found：", key)
 		}
 
 		if cursor == 0 {
 			break
 		}
 	}
+}
 
-	// fmt.Println(queue)
+// Handle 处理查询与清理
+func Handle(rdb *redis.Client) {
+	var queue = make(chan string)
+
+	go worker(rdb, queue)
+
+	go creater(rdb, queue)
+
 	time.Sleep(time.Second * 5)
 }
