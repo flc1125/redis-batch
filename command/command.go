@@ -6,6 +6,7 @@ import (
 
 	"github.com/flc1125/redis-batch-delete/redis"
 	"github.com/urfave/cli/v2"
+	redisRaw "github.com/go-redis/redis/v8"
 )
 
 func Run() {
@@ -38,7 +39,14 @@ func Run() {
 		Name:  "redis-batch-delete",
 		Usage: "Redis 批量删除操作",
 		Action: func(c *cli.Context) error {
-			rdb := redis.New()
+			rdb := redis.New(redis.config{
+				Cluster: false,
+				Options: &redisRaw.Options{
+					Addr:     "192.168.2.126:6379",
+					Password: "",
+					DB:       0,
+				}
+			})
 
 			Handle(rdb)
 
