@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"context"
 	"fmt"
 	"github.com/flc1125/redis-batch-delete/pkg/redis"
 	"github.com/spf13/cobra"
@@ -25,8 +24,6 @@ var deleteCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(deleteCmd)
 }
-
-var ctx = context.Background()
 
 type deleteLogic struct {
 	keys chan []string
@@ -65,7 +62,7 @@ func (this *deleteLogic) scan() {
 	)
 
 	for {
-		keys, cursor, err = redis.RDB.Scan(ctx, cursor, "*", 20).Result()
+		keys, cursor, err = redis.RDB.Scan(ctx, cursor, "*", 10).Result()
 
 		if err != nil {
 			panic(err)
