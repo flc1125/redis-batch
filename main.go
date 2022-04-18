@@ -1,10 +1,7 @@
 package main
 
-import "github.com/flc1125/redis-batch-delete/redis"
+import "github.com/flc1125/redis-batch-delete/cmd"
 
 func main() {
-	redis.New(&redis.Option{})
-	// command.Run()
+	cmd.Execute()
 }
-
-// main -a -h 192.168.1.1 -p 12313 "*" --delete
