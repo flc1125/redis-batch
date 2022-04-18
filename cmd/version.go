@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/flc1125/redis-batch-delete/version"
+	"github.com/flc1125/redis-batch/version"
 	"github.com/spf13/cobra"
 )
 

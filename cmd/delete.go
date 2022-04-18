@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/flc1125/redis-batch-delete/pkg/redis"
+	"github.com/flc1125/redis-batch/pkg/redis"
 	"github.com/spf13/cobra"
 	"strconv"
 	"sync"

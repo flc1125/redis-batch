@@ -1,4 +1,4 @@
-module github.com/flc1125/redis-batch-delete
+module github.com/flc1125/redis-batch
 
 go 1.18
 
