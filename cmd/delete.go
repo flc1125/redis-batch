@@ -10,7 +10,7 @@ import (
 
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "批量删除 Redis Key",
+	Short: "批量删除；这个命令可能会让你卷铺盖走人，确定要坐牢？",
 	Run: func(cmd *cobra.Command, args []string) {
 		logic := &deleteLogic{
 			keys: make(chan []string, 1000),

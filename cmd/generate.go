@@ -8,9 +8,9 @@ import (
 	"time"
 )
 
-var generateTestsCmd = &cobra.Command{
-	Use:   "generate:tests",
-	Short: "批量生成测试数据",
+var generateCmd = &cobra.Command{
+	Use:   "generate",
+	Short: "生成测试数据；如果你的服务器没有足够大的内存，请艾特你的运维大大，并暗示他赶紧买。",
 	Run: func(cmd *cobra.Command, args []string) {
 		for i := 1; i <= 10000; i++ {
 			redis.RDB.Set(ctx, "tests:"+strconv.Itoa(i), "value:"+strconv.Itoa(i), 5*time.Minute).Result()
@@ -21,5 +21,5 @@ var generateTestsCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(generateTestsCmd)
+	rootCmd.AddCommand(generateCmd)
 }
