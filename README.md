@@ -15,9 +15,11 @@
 go mod download
 go mod vendor
 
-go build main.go
+go build -o redis-batch main.go
+# or
+make build
 
-./main XXX
+./redis-batch XXX
 ```
 
 ## 功能
@@ -25,6 +27,7 @@ go build main.go
 ```bash
 go run main.go generate # 生成测试数据
 go run main.go delete # 批量删除数据
+go run main.go expire # 批量设置过期时间
 ```
 
 > 待完善……
