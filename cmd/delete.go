@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/flc1125/redis-batch/pkg/redis"
+	"github.com/flc1125/redis-batch/util/coroutine"
 	"github.com/spf13/cobra"
 	"strconv"
 	"sync"
@@ -15,6 +16,7 @@ var deleteCmd = &cobra.Command{
 		logic := &deleteLogic{
 			keys: make(chan []string, 1000),
 			wg:   sync.WaitGroup{},
+			co:   coroutine.New(20),
 		}
 
 		logic.delete()
@@ -28,6 +30,7 @@ func init() {
 type deleteLogic struct {
 	keys chan []string
 	wg   sync.WaitGroup
+	co   *coroutine.Coroutine
 }
 
 func (this *deleteLogic) delete() {
@@ -42,15 +45,17 @@ func (this *deleteLogic) del() {
 	for {
 		keys := <-this.keys
 
-		val, err := redis.RDB.Del(ctx, keys...).Result()
+		this.co.Run(func(co *coroutine.Coroutine) {
+			defer this.wg.Done()
 
-		if err != nil {
-			panic(err)
-		}
+			val, err := redis.RDB.Del(ctx, keys...).Result()
 
-		fmt.Println(fmt.Sprint(keys) + "::删除成功，删除数量:" + strconv.Itoa(int(val)))
+			if err != nil {
+				panic(err)
+			}
 
-		this.wg.Done()
+			fmt.Println(fmt.Sprint(keys) + "::删除成功，删除数量:" + strconv.Itoa(int(val)))
+		})
 	}
 }
 
